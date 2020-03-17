@@ -23,7 +23,7 @@ const schema = new mongoose.Schema({
     required: true
   }
 })
-schema.plugin(uniqueValidator);
+schema.plugin(uniqueValidator)
 
 schema.set('toJSON', {
   transform: (document, returnedObject) => {

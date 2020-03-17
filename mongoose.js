@@ -9,7 +9,7 @@ const password = process.argv[2]
 const url = `mongodb+srv://fso:${password}@fsop3-ry9b2.mongodb.net/phonebook?retryWrites=true&w=majority`
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-console.log("connected")
+console.log('connected')
 const phoneSchema = new mongoose.Schema({
   name: String,
   number: String,
@@ -17,8 +17,8 @@ const phoneSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', phoneSchema)
 
-if (process.argv.length == 3) {
-  console.log("reached")
+if (process.argv.length === 3) {
+  console.log('reached')
   //print results of phonebook
   Person.find({}).then(result => {
     console.log(result)
@@ -29,7 +29,7 @@ if (process.argv.length == 3) {
   })
 }
 
-if (process.argv.length == 5) {
+if (process.argv.length === 5) {
   //adds number to phonebook
   const person = new Person({
     name: process.argv[3],

@@ -27,24 +27,28 @@ app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons.map(person => person.toJSON()))
   })
+    .catch(error => next(error))
 })
 
-//TODO
-/*app.get('/info', (request, response) => {
-  response.send(`<p>Phonebook has info for ${phoneList.length} people</p><p>${Date().toString()}</p>`)
-})*/
+app.get('/info', (request, response) => {
+  Person.countDocuments({})
+    .then(r =>
+      response.send(`<p>Phonebook has info for ${r} people</p><p>${Date().toString()}</p>`)
+    )
+})
 
 app.get('/api/persons/:id', (request, response) => {
   Person.findById(request.params.id).then(person => {
     response.json(person.toJSON())
   })
+    .catch(error => next(error))
 })
 
-app.put('/api/notes/:id', (request, response, next) => {
+app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
   if(!body.name || !body.number) {
-    return response.status(400).json({ error: 'content missing'})
+    return response.status(400).json( { error: 'content missing' } )
   }
 
   const person = {
@@ -60,10 +64,11 @@ app.put('/api/notes/:id', (request, response, next) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  Person.findByIdAndRemove(request.params.id, { new: true})
-  .then(result => {
-    response.status(204).end()
-  })
+  Person.findByIdAndRemove(request.params.id, { new: true } )
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response) => {
@@ -71,7 +76,7 @@ app.post('/api/persons', (request, response) => {
   //console.log(body)
 
   if(!body.name || !body.number) {
-    return response.status(400).json({ error: 'content missing'})
+    return response.status(400).json( { error: 'content missing' } )
   }
 
   const person = new Person({
@@ -82,11 +87,14 @@ app.post('/api/persons', (request, response) => {
   person.save().then(person => {
     response.json(person.toJSON())
   })
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).end({ error: 'unknown endpoint' })
+  response.status(404).send({ error: 'unknown endpoint' })
 }
+
+app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
@@ -101,6 +109,6 @@ const errorHandler = (error, request, response, next) => {
 app.use(errorHandler)
 
 const PORT = process.env.PORT
-app.listen(PORT, ()=> {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
